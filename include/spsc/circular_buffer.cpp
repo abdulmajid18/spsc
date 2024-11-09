@@ -15,8 +15,8 @@ class CircularBuffer {
     public:
         explicit CircularBuffer() : capacity(capacity), head(0), tail(0), full(false) {}
 
-        bool push(T item);
-        T pop();
+        bool push(T item, unsigned max_attempts = 3);
+        T pop(unsigned max_attempts = 3);
         T peek_oldest() const;
         T peek_latest() const;
         bool is_empty() const;
