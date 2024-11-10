@@ -32,9 +32,7 @@ T CircularBuffer<T, Size>::pop(unsigned max_attempts) {
         read_index.value.store(next_read, std::memory_order_release);
 
         // Update the full flag if the buffer is empty after popping
-        if (next_read == write_idx) {
-            full.store(false, std::memory_order_release);
-        }
+        full.store(false, std::memory_order_release);
 
         return item; 
     }
