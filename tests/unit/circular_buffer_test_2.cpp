@@ -2,7 +2,8 @@
 #include <thread>
 #include <vector>
 #include <chrono>
-#include "./impl/circular_buffer.impl.cpp"
+#include "../../include/spsc/circular_buffer.hpp"
+
 
 class CircularBufferTest : public ::testing::Test {
 protected:
