@@ -15,7 +15,7 @@ enable_testing()
 find_package(GTest REQUIRED)
 
 # Add test executable
-add_executable(buffer_test circular_buffer_test_2.cpp)
+add_executable(buffer_test circular_buffer_test.cpp)
 
 # Link against GTest and pthread
 target_link_libraries(buffer_test
