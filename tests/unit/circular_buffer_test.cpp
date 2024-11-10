@@ -138,6 +138,33 @@ TEST_F(CircularBufferTest, ResetStateAfterClear) {
     EXPECT_EQ(buffer.pop(), 4);
 }
 
+// Move Semantics Test
+TEST_F(CircularBufferTest, MoveSemantics) {
+    struct MovableOnly {
+        std::unique_ptr<int> data;
+
+        // Default constructor
+        MovableOnly() : data(nullptr) {}  // Sets data to nullptr, allowing default construction
+        // Parameterized constructor
+        explicit MovableOnly(int val) : data(std::make_unique<int>(val)) {}
+        // Delete copy constructor and copy assignment to keep it move-only
+        MovableOnly(const MovableOnly&) = delete;
+        MovableOnly& operator=(const MovableOnly&) = delete;
+        // Default move constructor and move assignment
+        MovableOnly(MovableOnly&&) = default;
+        MovableOnly& operator=(MovableOnly&&) = default;
+    };
+    
+    spsc::CircularBuffer<MovableOnly, BUFFER_SIZE> move_buffer;
+    
+    // Test push with move-only type
+    EXPECT_TRUE(move_buffer.push(MovableOnly(42)));
+    
+    // Test pop with move-only type
+    auto item = move_buffer.pop();
+    EXPECT_EQ(*item.data, 42);
+}
+
 // // Concurrent Operation Tests
 // TEST_F(CircularBufferTest, ProducerConsumerScenario) {
 //     static constexpr int NUM_ITEMS = 10000;
@@ -220,25 +247,4 @@ TEST_F(CircularBufferTest, ResetStateAfterClear) {
 //     // Verify counts match
 //     EXPECT_EQ(producer_count.load(), consumer_count.load());
 //     std::cout << "Processed " << producer_count << " items during stress test\n";
-// }
-
-// // Move Semantics Test
-// TEST_F(CircularBufferTest, MoveSemantics) {
-//     struct MovableOnly {
-//         std::unique_ptr<int> data;
-//         explicit MovableOnly(int val) : data(std::make_unique<int>(val)) {}
-//         MovableOnly(const MovableOnly&) = delete;
-//         MovableOnly& operator=(const MovableOnly&) = delete;
-//         MovableOnly(MovableOnly&&) = default;
-//         MovableOnly& operator=(MovableOnly&&) = default;
-//     };
-    
-//     spsc::CircularBuffer<MovableOnly, BUFFER_SIZE> move_buffer;
-    
-//     // Test push with move-only type
-//     EXPECT_TRUE(move_buffer.push(MovableOnly(42)));
-    
-//     // Test pop with move-only type
-//     auto item = move_buffer.pop();
-//     EXPECT_EQ(*item.data, 42);
 // }
