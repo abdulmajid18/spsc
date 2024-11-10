@@ -44,30 +44,38 @@ TEST_F(CircularBufferTest, FullBufferOperations) {
     EXPECT_FALSE(buffer.push(100));
 }
 
-// TEST_F(CircularBufferTest, WrapAroundBehavior) {
-//     // Fill buffer
-//     for (int i = 0; i < BUFFER_SIZE; ++i) {
-//         EXPECT_TRUE(buffer.push(std::move(i)));
-//     }
+TEST_F(CircularBufferTest, WrapAroundBehavior) {
+    // Fill buffer
+    std::cout << "Size Before pushing: " << buffer.size() << std::endl;
+    for (int i = 0; i < BUFFER_SIZE; ++i) {
+        EXPECT_TRUE(buffer.push(std::move(i)));
+    }
     
-//     // Remove half
-//     for (int i = 0; i < BUFFER_SIZE/2; ++i) {
-//         EXPECT_EQ(buffer.pop(), i);
-//     }
+    std::cout << "Size After pushing: " << buffer.size() << std::endl;
+    EXPECT_EQ(buffer.peek_latest(), 7);
+
+    // Remove half
+    for (int i = 0; i < BUFFER_SIZE / 2; ++i) {
+        EXPECT_EQ(buffer.pop(), i); 
+    }
+
+
+    std::cout << "Size After Poping BUFFER_SIZE/2: " << buffer.size() << std::endl;
+    EXPECT_EQ(buffer.peek_oldest(), 4);
     
-//     // Add new elements, causing wraparound
-//     for (int i = 0; i < BUFFER_SIZE/2; ++i) {
-//         EXPECT_TRUE(buffer.push(i + BUFFER_SIZE));
-//     }
+    // Add new elements, causing wraparound
+    for (int i = 0; i < BUFFER_SIZE/2; ++i) {
+        EXPECT_TRUE(buffer.push(std::move(i + BUFFER_SIZE)));
+    }
+
+    EXPECT_EQ(buffer.peek_latest(), 11);
     
-//     // Verify all elements
-//     for (int i = BUFFER_SIZE/2; i < BUFFER_SIZE; ++i) {
-//         EXPECT_EQ(buffer.pop(), i);
-//     }
-//     for (int i = 0; i < BUFFER_SIZE/2; ++i) {
-//         EXPECT_EQ(buffer.pop(), i + BUFFER_SIZE);
-//     }
-// }
+    // Verify all elements
+    for (int i = BUFFER_SIZE/2; i < BUFFER_SIZE; ++i) {
+        EXPECT_EQ(buffer.pop(), i);
+    }
+
+}
 
 // Peek Operations Tests
 TEST_F(CircularBufferTest, PeekOperations) {
